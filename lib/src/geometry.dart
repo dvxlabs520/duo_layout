@@ -164,7 +164,7 @@ class DeviceGeometry {
   /// on other platforms.
   final bool? supported;
 
-  /// iOS: where UIKit lays out a bar along the left and right edges
+  /// iOS: where UIKit places a bar along the left and right edges
   /// (`UIView.LayoutRegion.bar(onEdge:extent:)`, 60pt wide here). On iPhone
   /// Duo the one by the status bar starts under it, on its axis.
   final Map<StripSide, Rect> sideBars;

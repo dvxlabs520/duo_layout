@@ -11,7 +11,7 @@ import UIKit
 ///   - `UIHingeInteraction`: the hinge's status (closed, partially open, fully
 ///     open) and angle.
 ///
-///   - `UIView.LayoutRegion.bar(onEdge:extent:)`: where UIKit lays out a
+///   - `UIView.LayoutRegion.bar(onEdge:extent:)`: where UIKit places a
 ///     bar along the left and right edges.
 ///
 /// Frames are in the Flutter view's points, which are Flutter's logical
@@ -109,7 +109,7 @@ public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       state["supported"] = true
       state["occlusions"] = view.reservedRegions(kind: .occlusion).map(DuoLayoutPlugin.encode)
       state["divisions"] = view.reservedRegions(kind: .division).map(DuoLayoutPlugin.encode)
-      // Where UIKit lays out a bar along each side edge
+      // Where UIKit places a bar along each side edge
       // (`UIView.LayoutRegion.bar(onEdge:extent:)`): on iPhone Duo, under the
       // status bar and on its axis. The extent only sets the width.
       var bars: [String: Any] = [:]

@@ -1,12 +1,12 @@
 # duo_layout
 
-Lay out your Flutter app for **iPhone Duo** the way Apple asks, from UIKit's own APIs. Flutter does not expose any of them on iOS; this plugin reads them natively and streams them to Dart:
+Adapt your Flutter app to **iPhone Duo** the way Apple asks, from UIKit's own APIs. Flutter does not expose any of them on iOS; this plugin reads them natively and streams them to Dart:
 
 | UIKit (iOS 27.1 SDK) | What you get |
 | --- | --- |
 | `UIView.reservedRegions(kind: .occlusion)` | Areas covered by hardware or system UI: the camera and the vertical status bar column |
 | `UIView.reservedRegions(kind: .division)` | Where content should divide in two: the fold |
-| `UIView.LayoutRegion.bar(onEdge:extent:)` | Where UIKit lays out a bar along each side edge: under the status bar, on its axis |
+| `UIView.LayoutRegion.bar(onEdge:extent:)` | Where UIKit places a bar along each side edge: under the status bar, on its axis |
 | `UIHingeInteraction` / `UIHinge` | Hinge status (closed, partially open, fully open) and angle |
 
 On top of them, `AdaptiveNavigationScaffold` puts your tabs in the status bar's column, as Apple places tab bars on iPhone Duo, instead of leaving that column empty.
@@ -60,7 +60,7 @@ g.supported;               // iOS: are UIKit's regions available?
 ## iPhone Duo: what Apple asks
 
 - Build with **Xcode 27.1** (iOS 27.1 SDK). The app then extends over the whole inner display. With older SDKs iOS letterboxes it with a black band by the status bar, and `supported` is false.
-- Lay out from the window's size, not from the device, its orientation or `UIScreen.main`.
+- Build the layout from the window's size, not from the device, its orientation or `UIScreen.main`.
 - Tab bars and toolbars go **vertically below the status bar**, in the side column (see `AdaptiveNavigationScaffold`).
 - Split content at `fold.bounds` when there is a division, and keep interactive content out of a region's `margins`.
 

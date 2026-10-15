@@ -5,7 +5,7 @@
 Pod::Spec.new do |s|
   s.name             = 'duo_layout'
   s.version          = '0.1.0'
-  s.summary          = 'Lays out Flutter apps for iPhone Duo from UIKit reserved regions and UIHinge.'
+  s.summary          = 'Adapts Flutter apps to iPhone Duo with UIKit reserved regions and UIHinge.'
   s.description      = <<-DESC
 Streams UIKit's reserved regions, side bar regions and hinge state (iOS 27.1 SDK) to Flutter.
                        DESC

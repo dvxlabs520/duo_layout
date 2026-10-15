@@ -5,8 +5,8 @@ repository: https://github.com/dvxlabs520/duo_layout
 issue_tracker: https://github.com/dvxlabs520/duo_layout/issues
 
 environment:
-  sdk: ^3.13.4
-  flutter: '>=3.3.0'
+  sdk: ^3.13.5
+  flutter: '>=3.47.7'
 
 dependencies:
   flutter:

@@ -74,7 +74,7 @@ g.supported;               // iOS: are UIKit's regions available?
 
 ## Platforms
 
-iOS 15+ and Android. UIKit's regions, bar regions and hinge need the iOS 27.1 SDK at build time and iOS 27.1 at run time; otherwise they are empty. On other platforms the geometry is empty, and `AdaptiveNavigationScaffold` falls back to a rail or a bottom bar.
+Flutter 3.47.7+ (Dart 3.13.5+), iOS 15+ and Android. UIKit's regions, bar regions and hinge need the iOS 27.1 SDK at build time and iOS 27.1 at run time; otherwise they are empty. On other platforms the geometry is empty, and `AdaptiveNavigationScaffold` falls back to a rail or a bottom bar.
 
 ## Example
 

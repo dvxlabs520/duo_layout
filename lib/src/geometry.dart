@@ -3,12 +3,10 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
-/// The hinge's status, as UIKit reports it (`UIHinge.Status`) or as Android's
-/// fold posture maps onto it.
+/// `UIHinge.Status` on iOS; mapped from the fold posture on Android.
 enum HingeStatus { unknown, closed, partiallyOpen, fullyOpen }
 
-/// The hinge of a foldable: its status and, on iOS, its angle in degrees
-/// (180 lying flat).
+/// Hinge status and, on iOS, angle in degrees.
 @immutable
 class Hinge {
   const Hinge(this.status, {this.angle});
@@ -30,10 +28,7 @@ class Hinge {
       'Hinge(${status.name}${angle == null ? '' : ', $angle°'})';
 }
 
-/// An area the system reserves in the window, in logical pixels.
-///
-/// On iOS 27.1 and later this is a `UIView.ReservedRegion`: [frame] includes
-/// [margins] kept clear around the reserved area for interactive content.
+/// A `UIView.ReservedRegion`; [frame] includes [margins].
 @immutable
 class ReservedRegion {
   const ReservedRegion(
@@ -46,7 +41,7 @@ class ReservedRegion {
   final EdgeInsets margins;
   final bool active;
 
-  /// The reserved area itself, without the margins.
+  /// [frame] without [margins].
   Rect get rect => margins.deflateRect(frame);
 
   @override
@@ -68,24 +63,20 @@ class ReservedRegion {
 class Fold {
   const Fold(this.bounds, {required this.status, required this.obstructs});
 
-  /// In logical pixels. Zero-width for a seamless fold; the hinge's or the
-  /// division's size otherwise.
   final Rect bounds;
   final HingeStatus status;
 
-  /// Content should not be placed in [bounds] (a physical hinge, or a
-  /// division region with width).
+  /// Content should stay out of [bounds].
   final bool obstructs;
 
-  /// Separates left from right; otherwise top from bottom.
   bool get vertical => bounds.height > bounds.width;
 
   bool get halfOpened => status == HingeStatus.partiallyOpen;
 
-  /// Half-open with the fold horizontal: the device stands like a laptop.
+  /// Half-open, fold horizontal.
   bool get isTabletop => halfOpened && !vertical;
 
-  /// Half-open with the fold vertical: the device is held like a book.
+  /// Half-open, fold vertical.
   bool get isBook => halfOpened && vertical;
 
   @override
@@ -106,9 +97,7 @@ class Fold {
 /// Which side edge a [SideStrip] runs along.
 enum StripSide { left, right }
 
-/// A column the system keeps along a side of the window, like the iPhone
-/// Duo's camera and status bar strip. Apple places tab bars and toolbars in
-/// it, vertically, below the reserved area.
+/// The column iPhone Duo keeps for its camera and status bar.
 @immutable
 class SideStrip {
   const SideStrip(
@@ -121,18 +110,14 @@ class SideStrip {
 
   final StripSide side;
 
-  /// The column's width: the reserved region's, margins included.
   final double width;
 
-  /// Where free space starts in the column: under the reserved area.
+  /// Where free space starts, below the reserved area.
   final double top;
 
-  /// The reserved region the column comes from.
   final ReservedRegion reserved;
 
-  /// Insets that center content in the column on the same axis as the
-  /// system's own items: UIKit's bar region for the edge, else a camera in
-  /// the column, else the reserved area without its margins.
+  /// Centers content on the status bar's axis.
   final EdgeInsets padding;
 
   @override
@@ -159,14 +144,10 @@ class DeviceGeometry {
     this.displayFeatures = const [],
   });
 
-  /// iOS: whether UIKit's reserved regions and hinge are available: the app
-  /// was built with the iOS 27.1 SDK and runs on iOS 27.1 or later. `null`
-  /// on other platforms.
+  /// iOS: whether UIKit's regions are available (iOS 27.1 SDK and runtime).
   final bool? supported;
 
-  /// iOS: where UIKit places a bar along the left and right edges
-  /// (`UIView.LayoutRegion.bar(onEdge:extent:)`, 60pt wide here). On iPhone
-  /// Duo the one by the status bar starts under it, on its axis.
+  /// iOS: `UIView.LayoutRegion.bar(onEdge:)` for each side edge.
   final Map<StripSide, Rect> sideBars;
 
   /// iOS: `reservedRegions(kind: .occlusion)`.
@@ -175,7 +156,7 @@ class DeviceGeometry {
   /// iOS: `reservedRegions(kind: .division)`.
   final List<ReservedRegion> divisions;
 
-  /// iOS: `UIHingeInteraction`. Android: derived from the fold's posture.
+  /// iOS: `UIHingeInteraction`; Android: from the fold posture.
   final Hinge? hinge;
 
   /// Android: `MediaQueryData.displayFeatures` (Jetpack WindowManager).
@@ -211,7 +192,7 @@ class DeviceGeometry {
     );
   }
 
-  /// From Android's display features (empty on other platforms).
+  /// From Android's display features.
   factory DeviceGeometry.fromDisplayFeatures(List<DisplayFeature> features) {
     final fold = features
         .where((f) => f.type != DisplayFeatureType.cutout)
@@ -243,7 +224,7 @@ class DeviceGeometry {
     );
   }
 
-  /// This geometry with the other platform's half filled in.
+  /// Fills empty fields from [other].
   DeviceGeometry merge(DeviceGeometry other) => DeviceGeometry(
     supported: supported ?? other.supported,
     sideBars: sideBars.isNotEmpty ? sideBars : other.sideBars,
@@ -255,8 +236,7 @@ class DeviceGeometry {
         : other.displayFeatures,
   );
 
-  /// The fold or hinge, if the window has one: the active division region on
-  /// iOS, the fold or hinge display feature on Android.
+  /// The active fold or hinge, if any.
   Fold? get fold {
     final division = divisions.where((d) => d.active).firstOrNull;
     if (division != null) {
@@ -281,8 +261,7 @@ class DeviceGeometry {
     return null;
   }
 
-  /// The column the system keeps along a side edge of a window of [size], if
-  /// an active occlusion region reaches that edge and is taller than wide.
+  /// The side column in a window of [size], if any.
   SideStrip? sideStrip(Size size) {
     for (final r in occlusions) {
       if (!r.active || r.frame.height < r.frame.width) continue;
@@ -295,8 +274,6 @@ class DeviceGeometry {
       } else {
         continue;
       }
-      // The axis the system centers its items on: a camera inside the
-      // column, else the reserved area without its margins.
       ReservedRegion? camera;
       for (final o in occlusions) {
         final inside =
@@ -311,9 +288,7 @@ class DeviceGeometry {
           camera = o;
         }
       }
-      // UIKit's own bar region for this edge is the surest guide: its top is
-      // under the status bar and its center is the axis of the status items.
-      // Without it, a camera in the column, else the region itself.
+      // Axis: UIKit's bar region, else a camera in the column, else the region.
       final bar = sideBars[side];
       final axis = bar?.center.dx ?? (camera?.rect ?? r.rect).center.dx;
       final shift = 2 * (axis - (left + right) / 2);

@@ -1,22 +1,7 @@
 import Flutter
 import UIKit
 
-/// Streams to Dart, on the event channel "duo_layout/events", what UIKit
-/// knows about the shape of the device:
-///
-///   - `UIView.reservedRegions(kind: .occlusion)`: areas covered by hardware or
-///     system UI, like the iPhone Duo's camera and vertical status bar.
-///   - `UIView.reservedRegions(kind: .division)`: where content should divide
-///     into two regions, like a fold.
-///   - `UIHingeInteraction`: the hinge's status (closed, partially open, fully
-///     open) and angle.
-///
-///   - `UIView.LayoutRegion.bar(onEdge:extent:)`: where UIKit places a
-///     bar along the left and right edges.
-///
-/// Frames are in the Flutter view's points, which are Flutter's logical
-/// pixels. The APIs ship with the iOS 27.1 SDK: built with an older SDK, or
-/// running on an older iOS, the stream reports no regions and no hinge.
+/// Streams UIKit's reserved regions, side bar regions and hinge (iOS 27.1) to Dart.
 public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private weak var registrar: FlutterPluginRegistrar?
   private var sink: FlutterEventSink?
@@ -43,15 +28,12 @@ public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     return nil
   }
 
-  /// Puts an invisible view over the Flutter view: it is told about every
-  /// size and safe-area change, and it is where the hinge interaction lives.
   private func attach() {
     if probe != nil {
       publish()
       return
     }
     guard let host = registrar?.viewController?.view else {
-      // The Flutter view may not be in place yet when Dart starts listening.
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
         if self?.sink != nil { self?.attach() }
       }
@@ -69,7 +51,6 @@ public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     if #available(iOS 27.1, *) {
       view.addInteraction(UIHingeInteraction { [weak self] _, update in
         if let h = update.hinge {
-          // UIHinge.angle is in radians; Dart gets degrees.
           self?.hinge = ["status": DuoLayoutPlugin.name(h.status), "angle": Double(h.angle) * 180 / .pi]
         } else {
           self?.hinge = nil
@@ -85,16 +66,13 @@ public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       self, selector: #selector(settle), name: UIApplication.didBecomeActiveNotification, object: nil)
   }
 
-  /// UIKit can settle the reserved regions after the view's last layout
-  /// pass, with nothing telling the view: ask again once the window is in
-  /// place.
+  // Reserved regions can settle after the last layout pass.
   @objc private func settle() {
     for delay in [0.15, 0.5, 1.0, 2.0] {
       DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in self?.publish() }
     }
   }
 
-  /// Sends the current geometry when it differs from the last one sent.
   private func publish() {
     guard let sink, let view = probe else { return }
     var state: [String: Any] = [
@@ -109,9 +87,6 @@ public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       state["supported"] = true
       state["occlusions"] = view.reservedRegions(kind: .occlusion).map(DuoLayoutPlugin.encode)
       state["divisions"] = view.reservedRegions(kind: .division).map(DuoLayoutPlugin.encode)
-      // Where UIKit places a bar along each side edge
-      // (`UIView.LayoutRegion.bar(onEdge:extent:)`): on iPhone Duo, under the
-      // status bar and on its axis. The extent only sets the width.
       var bars: [String: Any] = [:]
       for (name, edge) in [("left", UIRectEdge.left), ("right", UIRectEdge.right)] {
         let rect = view.bounds.inset(by: view.edgeInsets(for: .bar(onEdge: edge, extent: 60)))
@@ -154,7 +129,6 @@ public class DuoLayoutPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   #endif
 }
 
-/// A transparent view the size of the Flutter view that reports changes.
 final class ProbeView: UIView {
   var onChange: (() -> Void)?
 
@@ -168,6 +142,5 @@ final class ProbeView: UIView {
     onChange?()
   }
 
-  // Never takes touches meant for Flutter.
   override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? { nil }
 }

@@ -8,26 +8,16 @@ import 'geometry.dart';
 
 const _channel = EventChannel('duo_layout/events');
 
-/// Provides [DeviceGeometry] to the widgets below it. Put it above your pages,
-/// for example in `MaterialApp.builder`:
-///
-/// ```dart
-/// MaterialApp(builder: (context, child) => DeviceGeometryScope(child: child!))
-/// ```
-///
-/// On iOS it listens to the plugin (UIKit's reserved regions and hinge); on
-/// Android it reads `MediaQuery.displayFeatures`. Both update live as the
-/// device folds, unfolds or rotates.
+/// Provides [DeviceGeometry] below it, e.g. from `MaterialApp.builder`.
 class DeviceGeometryScope extends StatefulWidget {
   const DeviceGeometryScope({super.key, required this.child, this.events});
 
   final Widget child;
 
-  /// Overrides the platform stream, for tests and previews.
+  /// Replaces the platform stream, for tests.
   final Stream<Map<Object?, Object?>>? events;
 
-  /// The geometry from the nearest scope. Without a scope, only what
-  /// `MediaQuery` knows (Android's display features).
+  /// The nearest scope's geometry, or Android's display features without one.
   static DeviceGeometry of(BuildContext context) {
     final scope = context
         .dependOnInheritedWidgetOfExactType<_GeometryInherited>();

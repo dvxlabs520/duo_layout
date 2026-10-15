@@ -6,8 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:duo_layout/duo_layout.dart';
 
 void main() {
-  // What the iOS plugin sends for an iPhone Duo opened flat, held upright:
-  // the camera and status bar strip on the right, no division.
+  // iPhone Duo, flat and upright: strip on the right, no division.
   final duoOpen = <Object?, Object?>{
     'width': 466.0,
     'height': 678.0,

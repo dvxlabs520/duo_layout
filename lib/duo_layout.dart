@@ -1,6 +1,4 @@
-/// Adapts Flutter apps to iPhone Duo with UIKit's own APIs (iOS 27.1
-/// SDK): reserved regions, side bar regions and the hinge. Android foldables
-/// work too, through Jetpack WindowManager's display features.
+/// iPhone Duo layouts from UIKit's own APIs, plus Android foldables.
 library;
 
 export 'src/geometry.dart';

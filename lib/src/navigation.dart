@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'geometry.dart';
-import 'scope.dart';
 import 'widgets.dart';
 
 /// A destination in an [AdaptiveNavigationScaffold].
@@ -18,20 +17,11 @@ class AdaptiveDestination {
   final IconData? selectedIcon;
   final String label;
 
-  /// A count shown on the icon; 0 hides it.
+  /// Badge count; 0 hides it.
   final int badge;
 }
 
-/// Puts the app's navigation where each device expects it:
-///
-///   - **iPhone Duo**: vertically in the column the system keeps for the
-///     camera and status bar, under it and on its axis, as Apple places tab
-///     bars (from [DeviceGeometry.sideStrip]).
-///   - **Wide windows** (tablets, foldables opened in landscape): a
-///     [NavigationRail] on the side.
-///   - **Phones**: a [NavigationBar] at the bottom.
-///
-/// Needs a [DeviceGeometryScope] above it.
+/// Tabs in iPhone Duo's side column, a rail on wide windows, or a bottom bar.
 class AdaptiveNavigationScaffold extends StatelessWidget {
   const AdaptiveNavigationScaffold({
     super.key,
@@ -47,7 +37,7 @@ class AdaptiveNavigationScaffold extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
   final Widget body;
 
-  /// From this width on, a rail replaces the bottom bar.
+  /// Minimum width for the rail.
   final double railBreakpoint;
 
   Widget _icon(BuildContext context, int i) {
@@ -71,7 +61,6 @@ class AdaptiveNavigationScaffold extends StatelessWidget {
         icon: (i) => _icon(context, i),
         label: (i) => destinations[i].label,
       );
-      // The column is the navigation's now: the content does not pad for it.
       final content = MediaQuery.removePadding(
         context: context,
         removeRight: onRight,
@@ -156,8 +145,6 @@ class _StripBar extends StatelessWidget {
       width: strip.width,
       child: LayoutBuilder(
         builder: (context, c) {
-          // As tall as there is room for, down to a comfortable tap target;
-          // past that the column scrolls instead of overflowing.
           final room = c.maxHeight - strip.top - bottom - 16;
           final itemHeight = (room / count).clamp(48.0, 64.0);
           return SingleChildScrollView(

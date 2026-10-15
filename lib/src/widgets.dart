@@ -3,12 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'geometry.dart';
 import 'scope.dart';
 
-/// [top] above the fold and [bottom] below it while the device stands
-/// half-open with the fold horizontal (tabletop); otherwise [top] fills the
-/// space and [bottom] sits under it.
-///
-/// A terminal or a video goes in [top]; the controls, keys or a keyboard in
-/// [bottom].
+/// [top] above the fold and [bottom] below it in tabletop posture.
 class TabletopSplit extends StatefulWidget {
   const TabletopSplit({
     super.key,
@@ -19,7 +14,7 @@ class TabletopSplit extends StatefulWidget {
 
   final Widget top, bottom;
 
-  /// Below this height for either half, the split is not used.
+  /// Minimum height of each half for the split.
   final double minHeight;
 
   @override
@@ -27,7 +22,7 @@ class TabletopSplit extends StatefulWidget {
 }
 
 class _TabletopSplitState extends State<TabletopSplit> {
-  double? _originY; // this widget's top edge in window coordinates
+  double? _originY;
 
   void _measure() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -15,9 +15,6 @@ class ExampleApp extends StatelessWidget {
   );
 }
 
-/// The three things a foldable-aware app usually needs, one per tab, under
-/// an [AdaptiveNavigationScaffold]: on iPhone Duo the tabs sit in the status
-/// bar's column, on wide windows in a rail, on phones at the bottom.
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -58,7 +55,6 @@ class _HomeState extends State<Home> {
   );
 }
 
-/// Everything the device reports.
 class GeometryPage extends StatelessWidget {
   const GeometryPage({super.key});
 
@@ -111,7 +107,6 @@ class GeometryPage extends StatelessWidget {
   }
 }
 
-/// A list and its detail, divided on the fold when there is one.
 class SplitPage extends StatefulWidget {
   const SplitPage({super.key});
 
@@ -131,7 +126,6 @@ class _SplitPageState extends State<SplitPage> {
         final originX = box != null && box.hasSize
             ? box.localToGlobal(Offset.zero).dx
             : 0.0;
-        // The fold's position in this page's coordinates, or 40% of the width.
         final split = fold != null && fold.vertical
             ? fold.bounds.left - originX
             : c.maxWidth * 0.4;
@@ -175,8 +169,6 @@ class _SplitPageState extends State<SplitPage> {
   }
 }
 
-/// Content above the fold, controls below it when the device stands
-/// half-open.
 class TabletopPage extends StatelessWidget {
   const TabletopPage({super.key});
 

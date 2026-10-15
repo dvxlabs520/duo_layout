@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Streams UIKit's reserved regions, side bar regions and hinge state (iOS 27.1 SDK) to Flutter.
                        DESC
-  s.homepage         = 'https://github.com/david2701/duo_layout'
+  s.homepage         = 'https://github.com/dvxlabs520/duo_layout'
   s.license          = { :type => 'MIT', :file => '../LICENSE' }
   s.author           = 'DvxLabs'
   s.source           = { :path => '.' }

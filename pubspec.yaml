@@ -1,8 +1,8 @@
 name: duo_layout
 description: "Adapts Flutter apps to iPhone Duo with UIKit's own APIs: reserved regions, side bar regions and UIHinge. Android foldables are supported too."
 version: 0.1.0
-repository: https://github.com/david2701/duo_layout
-issue_tracker: https://github.com/david2701/duo_layout/issues
+repository: https://github.com/dvxlabs520/duo_layout
+issue_tracker: https://github.com/dvxlabs520/duo_layout/issues
 
 environment:
   sdk: ^3.13.4
